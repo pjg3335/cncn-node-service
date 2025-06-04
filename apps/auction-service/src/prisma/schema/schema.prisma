@@ -1,0 +1,88 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  output        = "../generated"
+}
+
+model Test {
+  testId String @id @default(uuid()) @db.Uuid
+  title  String
+  value  BigInt
+}
+
+enum AuctionStatus {
+  visible // 공개
+  hidden // 일시 중지/숨김
+  cancelled // 취소됨
+}
+
+enum ProductCondition {
+  unopened // 미개봉
+  new // 새상품 (개봉은 했지만 미사용 포함 가능)
+  used // 사용감 있음
+}
+
+model Auctions {
+  auctionId          BigInt           @id @default(autoincrement())
+  auctionUuid        String           @unique @default(uuid()) @db.Uuid
+  categoryId         Int?
+  title              String
+  description        String
+  minimumBid         BigInt
+  startAt            DateTime         @db.Timestamptz(6)
+  endAt              DateTime         @db.Timestamptz(6)
+  isDirectDeal       Boolean
+  directDealLocation String?
+  status             AuctionStatus
+  productCondition   ProductCondition
+  viewCount          BigInt           @default(0)
+  thumbnailKey       String
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+  version   Int       @default(0)
+
+  sellerUuid String @db.Uuid
+
+  auctionBidders AuctionBidders[]
+  auctionImages  AuctionImages[]
+}
+
+model AuctionImages {
+  auctionImageId BigInt @id @default(autoincrement())
+  key            String
+  order          Int
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+  version   Int       @default(0)
+
+  auctionId BigInt
+  auction   Auctions @relation(fields: [auctionId], references: [auctionId])
+
+  @@index([auctionId])
+}
+
+model AuctionBidders {
+  auctionBidderId   BigInt @id @default(autoincrement())
+  auctionBidderUuid String @unique @default(uuid()) @db.Uuid
+  bidAmount         BigInt
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+  version   Int       @default(0)
+
+  bidderUuid String @db.Uuid
+
+  auctionId BigInt
+  auction   Auctions @relation(fields: [auctionId], references: [auctionId])
+
+  @@index([auctionId])
+}
