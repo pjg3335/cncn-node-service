@@ -30,10 +30,11 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 
 RUN npm install -g pnpm prisma
-RUN pnpm install --prod
 
+RUN pnpm install
 COPY apps/auction-service/src/prisma/schema/schema.prisma apps/auction-service/src/prisma/schema/schema.prisma
 RUN pnpm exec prisma generate --schema=apps/auction-service/src/prisma/schema/schema.prisma
+RUN pnpm prune --prod
 
 COPY --from=development /usr/src/app/dist ./dist
 
