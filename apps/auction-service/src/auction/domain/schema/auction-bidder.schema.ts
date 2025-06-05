@@ -11,5 +11,6 @@ export const auctionBidderPropsSchema = z
     version: z.number(),
     bidderUuid: z.string().uuid({ message: '입찰자 UUID의 형식이 올바르지 않습니다.' }),
     auctionId: z.bigint(),
+    auctionUuid: z.string().uuid({ message: '경매 UUID의 형식이 올바르지 않습니다.' }),
   })
   .strip();

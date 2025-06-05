@@ -5,9 +5,9 @@ import { UpdateAuctionCommand } from 'apps/auction-service/src/auction/applicati
 import { UpdateAuctionResponse } from 'apps/auction-service/src/auction/application/port/dto/update-auction.response';
 
 export class UpdateAuctionDtoMapper {
-  static toCommand = (dto: UpdateAuctionRequestDto): UpdateAuctionCommand => {
+  static toCommand = (auctionUuid: string, dto: UpdateAuctionRequestDto): UpdateAuctionCommand => {
     return {
-      auctionUuid: dto.auctionUuid,
+      auctionUuid: auctionUuid,
       description: dto.description,
       title: dto.title,
       minimumBid: dto.minimumBid ? BigInt(dto.minimumBid) : undefined,

@@ -1,10 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class AuctionRequestDto {
-  @ApiProperty({ type: String })
-  auctionUuid!: string;
-}
-
 class AuctionImageResponseDto {
   @ApiProperty({ type: Number })
   auctionImageId!: number;

@@ -7,6 +7,7 @@ import { auctionPropsSchema } from '../../../domain/schema/auction.schema';
 import AuctionForUpdateDomain from '../../../domain/model/auction-for-update.domain';
 import AuctionForDeleteDomain from '../../../domain/model/auction-for-delete.domain';
 import {
+  AuctionBiddersReturn,
   AuctionsAdminReturn,
   AuctionsArgs,
   AuctionsReturn,
@@ -21,6 +22,7 @@ import AuctionAdminDomain from '../../../domain/model/auction-admin.domain';
 import { auctionAdminPropsSchema } from '../../../domain/schema/auction-admin.schema';
 import { AuctionsCommand } from '../../../application/port/dto/auctions.command';
 import { AuctionsAdminCommand } from '../../../application/port/dto/auctions-admin.command';
+import { AuctionBiddersCommand } from '../../../application/port/dto/auction-bidders.command';
 
 @Injectable()
 export class AuctionPrismaRepository extends AuctionRepositoryPort {
@@ -92,7 +94,12 @@ export class AuctionPrismaRepository extends AuctionRepositoryPort {
       orderBy: { bidAmount: 'desc' },
     });
 
-    return auctionBidder ? new AuctionBidderDomain(auctionBidder) : undefined;
+    return auctionBidder
+      ? new AuctionBidderDomain({
+          ...auctionBidder,
+          auctionUuid: auction.auctionUuid,
+        })
+      : undefined;
   };
 
   override findAuctions(args: AuctionsCommand): Promise<AuctionsReturn>;
@@ -219,5 +226,53 @@ export class AuctionPrismaRepository extends AuctionRepositoryPort {
     });
 
     return res.count;
+  };
+
+  override findAuctionBidders = async ({
+    auctionUuid,
+    cursor,
+  }: AuctionBiddersCommand): Promise<AuctionBiddersReturn> => {
+    const limit = 20;
+    const pageSize = limit + 1;
+
+    const auction = await this.prisma.auctions.findUnique({
+      where: { auctionUuid },
+    });
+
+    if (!auction) {
+      throw new AppException(
+        { message: '해당 경매를 찾을 수 없습니다.', code: ErrorCode.NOT_FOUND },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const rows = await this.prisma.auctionBidders.findMany({
+      where: {
+        auctionId: auction.auctionId,
+        ...(cursor && {
+          OR: [
+            { createdAt: { lt: cursor.createdAt } },
+            { AND: [{ createdAt: cursor.createdAt }, { bidAmount: cursor.bidAmount }] },
+          ],
+        }),
+      },
+      orderBy: { bidAmount: 'desc' },
+      take: pageSize,
+    });
+
+    const hasNext = rows.length > limit;
+    const items = hasNext ? rows.slice(0, limit) : rows;
+    const lastItem = items[items.length - 1];
+    const nextCursor = hasNext
+      ? {
+          bidAmount: lastItem.bidAmount,
+          createdAt: lastItem.createdAt,
+        }
+      : null;
+
+    return {
+      items: items.map((row) => new AuctionBidderDomain({ ...row, auctionUuid })),
+      nextCursor,
+    };
   };
 }

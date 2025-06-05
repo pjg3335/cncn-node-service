@@ -6,10 +6,11 @@ import AuctionForDeleteDomain from '../../../domain/model/auction-for-delete.dom
 import AuctionForUpdateDomain from '../../../domain/model/auction-for-update.domain';
 import AuctionDomain from '../../../domain/model/auction.domain';
 import { AuctionAdminCommand } from '../dto/auction-admin.command';
+import { AuctionBiddersCommand } from '../dto/auction-bidders.command';
 import { AuctionCommand } from '../dto/auction.command';
 import { AuctionsAdminCommand } from '../dto/auctions-admin.command';
 import { AuctionsCommand } from '../dto/auctions.command';
-import { AuctionsAdminReturn, AuctionsReturn } from './auction-repository.port.type';
+import { AuctionBiddersReturn, AuctionsAdminReturn, AuctionsReturn } from './auction-repository.port.type';
 import { Prisma } from 'apps/auction-service/src/prisma/generated';
 
 export type TX = Prisma.TransactionClient;
@@ -41,4 +42,6 @@ export abstract class AuctionRepositoryPort {
   abstract createAuctionBidder: (auctionBidder: AuctionBidderForCreateDomain, tx?: TX) => Promise<void>;
 
   abstract updateAuctionCurrentBid: (auctionUuid: string, bidAmount: bigint, tx?: TX) => Promise<number>;
+
+  abstract findAuctionBidders: (args: AuctionBiddersCommand) => Promise<AuctionBiddersReturn>;
 }

@@ -11,6 +11,10 @@ import { PresignedUrlUseCase } from '../port/in/presigned-url.use-case';
 import { PresignedUrlService } from './presigned-url.service';
 import { AuctionUseCase } from '../port/in/auction.use-case';
 import { AuctionService } from './auction.service';
+import { CreateAuctionBidderUseCase } from '../port/in/create-auction-bidder.use-case';
+import { CreateAuctionBidderService } from './create-auction-bidder.service';
+import { AuctionBiddersUseCase } from '../port/in/auction-bidders.use-case';
+import { AuctionBiddersService } from './auction-bidders.service';
 
 export const auctionUseCaseProviders: Provider[] = [
   {
@@ -36,5 +40,13 @@ export const auctionUseCaseProviders: Provider[] = [
   {
     provide: PresignedUrlUseCase,
     useClass: PresignedUrlService,
+  },
+  {
+    provide: CreateAuctionBidderUseCase,
+    useClass: CreateAuctionBidderService,
+  },
+  {
+    provide: AuctionBiddersUseCase,
+    useClass: AuctionBiddersService,
   },
 ];

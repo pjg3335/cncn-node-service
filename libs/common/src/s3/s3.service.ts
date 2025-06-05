@@ -19,9 +19,6 @@ export class S3Service {
         accessKeyId: this.configService.getOrThrow('AWS_ACCESS_KEY_ID', { infer: true }),
         secretAccessKey: this.configService.getOrThrow('AWS_SECRET_ACCESS_KEY', { infer: true }),
       },
-      // TODO: 이하는 minio에서 테스트용임 나중에 지우기
-      forcePathStyle: true,
-      endpoint: 'http://minio:9000',
     });
     this.bucket = this.configService.getOrThrow('AWS_S3_BUCKET_NAME', { infer: true });
   }
@@ -63,7 +60,6 @@ export class S3Service {
     const region = this.configService.getOrThrow('AWS_REGION', { infer: true });
     const bucket = this.bucket;
 
-    return `http://localhost:9000/${bucket}/${key}`; // TODO: minio에서 테스트용임 나중에 지우기
-    // return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+    return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
   };
 }

@@ -1,13 +1,13 @@
 import { AuctionCommand } from 'apps/auction-service/src/auction/application/port/dto/auction.command';
 import { toNumber } from '@app/common/utils/number.utils';
-import { AuctionRequestDto, AuctionResponseDto } from '../dto/auction.dto';
+import { AuctionResponseDto } from '../dto/auction.dto';
 import { AuctionResponse } from 'apps/auction-service/src/auction/application/port/dto/auction.response';
 
 export class AuctionDtoMapper {
-  static toCommand = (dto: AuctionRequestDto): AuctionCommand => {
+  static toCommand = (auctionUuid: string): AuctionCommand => {
     return {
       type: 'user',
-      auctionUuid: dto.auctionUuid,
+      auctionUuid,
     };
   };
 

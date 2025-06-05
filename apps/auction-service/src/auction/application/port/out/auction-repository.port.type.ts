@@ -1,4 +1,5 @@
 import AuctionAdminDomain from '../../../domain/model/auction-admin.domain';
+import AuctionBidderDomain from '../../../domain/model/auction-bidder.domain';
 import AuctionDomain from '../../../domain/model/auction.domain';
 
 export type AuctionsArgs = {
@@ -14,4 +15,12 @@ export type AuctionsReturn = {
 export type AuctionsAdminReturn = {
   nextCursor: AuctionsArgs | null;
   items: AuctionAdminDomain[];
+};
+
+export type AuctionBiddersReturn = {
+  nextCursor: {
+    bidAmount: bigint;
+    createdAt: Date;
+  } | null;
+  items: AuctionBidderDomain[];
 };
