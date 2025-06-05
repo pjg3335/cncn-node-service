@@ -14,16 +14,31 @@ import { CreateAuctionDtoMapper } from './mapper/create-auction-dto.mapper';
 import { UpdateAuctionDtoMapper } from './mapper/update-auction-dto.mapper';
 import { PresignedUrlRequestDto, PresignedUrlResponseDto } from './dto/presigned-url.dto';
 import { PresignedUrlUseCase } from '../../../application/port/in/presigned-url.use-case';
+import { AuctionUseCase } from '../../../application/port/in/auction.use-case';
+import { AuctionRequestDto } from './dto/auction.dto';
+import { AuctionResponseDto } from './dto/auction.dto';
+import { AuctionDtoMapper } from './mapper/auction-dto.mapper';
 
 @Controller('/auction')
 export class AuctionController {
   constructor(
+    private readonly auctionUseCase: AuctionUseCase,
     private readonly auctionsUseCase: AuctionsUseCase,
     private readonly createAuctionUseCase: CreateAuctionUseCase,
     private readonly updateAuctionUseCase: UpdateAuctionUseCase,
     private readonly deleteAuctionUseCase: DeleteAuctionUseCase,
     private readonly presignedUrlUseCase: PresignedUrlUseCase,
   ) {}
+
+  @Version('1')
+  @Get('/')
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: AuctionResponseDto })
+  async auctionV1(@Query() requestDto: AuctionRequestDto): Promise<AuctionResponseDto> {
+    const command = AuctionDtoMapper.toCommand(requestDto);
+    const response = await this.auctionUseCase.execute(command);
+    return AuctionDtoMapper.fromResponse(response);
+  }
 
   @Version('1')
   @Get('/list')

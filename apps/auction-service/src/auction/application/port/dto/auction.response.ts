@@ -1,15 +1,10 @@
-type AuctionsNextCursorResponse = {
-  createdAt: Date;
-  auctionUuid: string;
-};
-
-type AuctionsImageResponse = {
+type AuctionImageResponse = {
   auctionImageId: bigint;
   url: string;
   order: number;
 };
 
-type AuctionsItemResponse = {
+export type AuctionResponse = {
   auctionUuid: string;
   categoryId?: number | null;
   title: string;
@@ -25,10 +20,5 @@ type AuctionsItemResponse = {
   thumbnailUrl: string;
   createdAt: Date;
   sellerUuid: string;
-  images: AuctionsImageResponse[];
-};
-
-export type AuctionsResponse = {
-  items: AuctionsItemResponse[];
-  nextCursor: AuctionsNextCursorResponse | null;
+  images: AuctionImageResponse[];
 };

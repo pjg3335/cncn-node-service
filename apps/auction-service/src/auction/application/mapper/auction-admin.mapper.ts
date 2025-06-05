@@ -1,16 +1,16 @@
-import AuctionDomain, { AuctionProps } from '../../domain/model/auction.domain';
-import { AuctionsResponse } from '../port/dto/auctions.response';
+import AuctionAdminDomain, { AuctionAdminProps } from '../../domain/model/auction-admin.domain';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { AuctionFileStoragePort } from '../port/out/auction-file-storage-port';
+import { AuctionsAdminResponse } from '../port/dto/auctions-admin.response';
 import { AppException } from '@app/common/common/app.exception';
 import { ErrorCode } from '@app/common';
 
 @Injectable()
-export class AuctionMapper {
+export class AuctionAdminMapper {
   constructor(private readonly auctionFileStoragePort: AuctionFileStoragePort) {}
 
-  toResponse = (auction: AuctionDomain): AuctionsResponse['items'][number] => {
-    const snapshot = auction.getSnapshot();
+  toResponse = (auctionAdmin: AuctionAdminDomain): AuctionsAdminResponse['items'][number] => {
+    const snapshot = auctionAdmin.getSnapshot();
 
     return {
       auctionUuid: snapshot.auctionUuid,
@@ -36,8 +36,10 @@ export class AuctionMapper {
     };
   };
 
-  private mapAuctionStatus = ({ endAt, startAt, status }: Pick<AuctionProps, 'status' | 'startAt' | 'endAt'>) => {
-    if (status === 'visible') {
+  private mapAuctionStatus = ({ endAt, startAt, status }: Pick<AuctionAdminProps, 'status' | 'startAt' | 'endAt'>) => {
+    if (status === 'cancelled' || status === 'hidden') {
+      return status;
+    } else if (status === 'visible') {
       const now = new Date();
       if (now < startAt) {
         return 'waiting';

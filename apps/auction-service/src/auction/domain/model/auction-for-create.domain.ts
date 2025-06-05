@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 export type AuctionForCreateProps = z.infer<typeof auctionForCreatePropsSchema>;
 
-export type AuctionForCreateArgs = Omit<AuctionForCreateProps, 'status' | 'sellerUuid'>;
+export type AuctionForCreateArgs = Omit<AuctionForCreateProps, 'status' | 'sellerUuid' | 'currentBid'>;
 
 export default class AuctionForCreateDomain {
   props: AuctionForCreateProps;
@@ -38,7 +38,7 @@ export default class AuctionForCreateDomain {
       if (!key.startsWith(`auction/${user.userId}/images/`)) {
         throw new AppException(
           { message: '이미지 키가 올바르지 않습니다.', code: ErrorCode.VALIDATION_ERROR },
-          HttpStatus.BAD_REQUEST, //
+          HttpStatus.BAD_REQUEST,
         );
       }
     }
@@ -47,6 +47,7 @@ export default class AuctionForCreateDomain {
       ...input,
       sellerUuid: user.userId,
       status: 'visible',
+      currentBid: 0n,
     };
     this.props = auctionForCreatePropsSchema.parse(props);
   }

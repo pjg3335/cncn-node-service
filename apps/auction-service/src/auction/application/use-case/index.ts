@@ -9,8 +9,14 @@ import { DeleteAuctionUseCase } from '../port/in/delete-auction.use-case';
 import { DeleteAuctionService } from './delete-auction.service';
 import { PresignedUrlUseCase } from '../port/in/presigned-url.use-case';
 import { PresignedUrlService } from './presigned-url.service';
+import { AuctionUseCase } from '../port/in/auction.use-case';
+import { AuctionService } from './auction.service';
 
 export const auctionUseCaseProviders: Provider[] = [
+  {
+    provide: AuctionUseCase,
+    useClass: AuctionService,
+  },
   {
     provide: AuctionsUseCase,
     useClass: AuctionsService,

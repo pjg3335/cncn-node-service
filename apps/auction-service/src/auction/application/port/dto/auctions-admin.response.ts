@@ -19,7 +19,7 @@ type AuctionsItemResponse = {
   endAt: Date;
   isDirectDeal: boolean;
   directDealLocation?: string | null;
-  status: 'waiting' | 'active' | 'ended';
+  status: 'waiting' | 'active' | 'ended' | 'hidden' | 'cancelled';
   productCondition: 'unopened' | 'new' | 'used';
   viewCount: bigint;
   thumbnailUrl: string;
@@ -28,7 +28,7 @@ type AuctionsItemResponse = {
   images: AuctionsImageResponse[];
 };
 
-export type AuctionsResponse = {
+export type AuctionsAdminResponse = {
   items: AuctionsItemResponse[];
   nextCursor: AuctionsNextCursorResponse | null;
 };

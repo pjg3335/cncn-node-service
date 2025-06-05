@@ -13,6 +13,13 @@ async function bootstrap() {
     defaultVersion: '1',
   });
 
+  app.enableCors({
+    origin: /^http:\/\/localhost(:\d+)?$/,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+    credentials: true,
+  });
+
   app.useGlobalFilters(new ZodExceptionFilter());
 
   app.useGlobalInterceptors(new BigIntToNumberInterceptor());

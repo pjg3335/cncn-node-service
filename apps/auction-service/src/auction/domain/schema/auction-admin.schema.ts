@@ -1,7 +1,7 @@
 import { isTimeTruncated } from '@app/common';
 import { z } from 'zod';
 
-export const auctionPropsSchema = z
+export const auctionAdminPropsSchema = z
   .object({
     auctionId: z.bigint(),
     auctionUuid: z.string().uuid({ message: '경매 UUID의 형식이 올바르지 않습니다.' }),
@@ -21,12 +21,15 @@ export const auctionPropsSchema = z
     }),
     isDirectDeal: z.boolean(),
     directDealLocation: z.string().nullable(),
-    status: z.enum(['visible']),
+    status: z.enum(['visible', 'hidden', 'cancelled']),
     productCondition: z.enum(['unopened', 'new', 'used']),
     viewCount: z.bigint(),
     thumbnailKey: z.string(),
     createdAt: z.date(),
+    updatedAt: z.date(),
+    deletedAt: z.date().nullable(),
     sellerUuid: z.string().uuid({ message: '경매 UUID의 형식이 올바르지 않습니다.' }),
+    version: z.number(),
     images: z
       .object({
         auctionImageId: z.bigint(),

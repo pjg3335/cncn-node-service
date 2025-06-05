@@ -20,12 +20,12 @@
     "test:e2e": "jest --config ./apps/cncn-api/test/jest-e2e.json",
     "prisma:auction-service:format": "npx prisma format --schema=apps/auction-service/src/prisma/schema/schema.prisma",
     "prisma:auction-service:generate": "npx prisma generate --schema=apps/auction-service/src/prisma/schema/schema.prisma",
-    "prisma:auction-service:migrate": " npx prisma migrate dev --create-only --schema=apps/auction-service/src/prisma/schema/schema.prisma",
+    "prisma:auction-service:migrate": "npx prisma migrate dev --create-only --schema=apps/auction-service/src/prisma/schema/schema.prisma",
     "prisma:auction-service:deploy": "npx prisma migrate deploy --schema=apps/auction-service/src/prisma/schema/schema.prisma",
     "prisma:test:auction-service:deploy": "npx prisma migrate deploy --schema=apps/auction-service/src/prisma/schema/schema.prisma",
     "prisma:catalog-query-service:format": "npx prisma format --schema=apps/catalog-query-service/src/prisma/schema/schema.prisma",
     "prisma:catalog-query-service:generate": "npx prisma generate --schema=apps/catalog-query-service/src/prisma/schema/schema.prisma",
-    "prisma:catalog-query-service:migrate": " npx prisma migrate dev --create-only --schema=apps/catalog-query-service/src/prisma/schema/schema.prisma",
+    "prisma:catalog-query-service:migrate": "npx prisma migrate dev --create-only --schema=apps/catalog-query-service/src/prisma/schema/schema.prisma",
     "prisma:catalog-query-service:deploy": "npx prisma migrate deploy --schema=apps/catalog-query-service/src/prisma/schema/schema.prisma"
   },
   "dependencies": {

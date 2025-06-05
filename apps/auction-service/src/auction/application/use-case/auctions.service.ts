@@ -15,16 +15,10 @@ export class AuctionsService extends AuctionsUseCase {
   }
 
   override execute = async (command: AuctionsCommand): Promise<AuctionsResponse> => {
-    const res = await this.auctionRepositoryPort.auctions(command);
+    const res = await this.auctionRepositoryPort.findAuctions(command);
 
     return {
-      type: 'user',
-      items: res.items
-        .map((auction) => this.auctionMapper.toResponse(auction))
-        .filter(
-          (item): item is Extract<typeof item, { status: 'waiting' | 'active' | 'ended' }> =>
-            item.status !== 'cancelled' && item.status !== 'hidden',
-        ),
+      items: res.items.map((auction) => this.auctionMapper.toResponse(auction)),
       nextCursor: res.nextCursor,
     };
   };

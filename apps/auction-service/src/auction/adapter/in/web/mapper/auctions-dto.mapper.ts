@@ -8,12 +8,16 @@ export class AuctionsDtoMapper {
   static toCommand = (dto: AuctionsRequestDto): AuctionsCommand => {
     const parsed = dto.createdAt ? parseISO(dto.createdAt) : undefined;
     const createdAt = parsed && isValid(parsed) ? parsed : undefined;
-    return dto.auctionUuid && createdAt
-      ? {
-          auctionUuid: dto.auctionUuid,
-          createdAt,
-        }
-      : undefined;
+    return {
+      type: 'user',
+      cursor:
+        dto.auctionUuid && createdAt
+          ? {
+              auctionUuid: dto.auctionUuid,
+              createdAt,
+            }
+          : undefined,
+    };
   };
 
   static fromResponse = (response: AuctionsResponse): AuctionsResponseDto => {

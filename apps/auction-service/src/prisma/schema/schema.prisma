@@ -34,6 +34,7 @@ model Auctions {
   title              String
   description        String
   minimumBid         BigInt
+  currentBid         BigInt
   startAt            DateTime         @db.Timestamptz(6)
   endAt              DateTime         @db.Timestamptz(6)
   isDirectDeal       Boolean

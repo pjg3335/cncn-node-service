@@ -1,5 +1,5 @@
-export type AuctionsCommand = {
-  type: 'user';
+export type AuctionsAdminCommand = {
+  type: 'admin';
   cursor?: {
     auctionUuid: string;
     createdAt: Date;
