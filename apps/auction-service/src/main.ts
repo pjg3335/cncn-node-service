@@ -30,11 +30,12 @@ async function bootstrap() {
     .setDescription('API에 대한 설명')
     .setVersion('1.0')
     .addBearerAuth()
+    .addServer('/auction-service')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  app.use('/api/v3/api-docs', (_: Request, res: Response) => res.json(document));
-  SwaggerModule.setup('/api/swagger-ui', app, () => document, {
-    swaggerUrl: '/api/v3/api-docs',
+  app.use('/v3/api-docs', (_: Request, res: Response) => res.json(document));
+  SwaggerModule.setup('/swagger-ui', app, () => document, {
+    swaggerUrl: '/v3/api-docs',
   });
 
   await app.listen(process.env.PORT ?? 3000);

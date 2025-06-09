@@ -52,6 +52,6 @@ jobs:
       - name: Get image digest
         id: digest
         run: |
-          IMAGE_DIGEST=$(aws ecr describe-images -—repository-name ${{ env.ECR_REPOSITORY }} —image-ids imageTag=latest —query 'imageDetails[0].imageDigest' —output text)
+          IMAGE_DIGEST=$(aws ecr describe-images --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageTag=latest --query 'imageDetails[0].imageDigest' --output text)
           echo "Image digest: $IMAGE_DIGEST"
           echo "digest=$IMAGE_DIGEST" >> $GITHUB_OUTPUT
