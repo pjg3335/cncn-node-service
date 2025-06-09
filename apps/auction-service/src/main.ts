@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { BigIntToNumberInterceptor, ZodExceptionFilter } from '@app/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { VersioningType } from '@nestjs/common';
+import type { Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,9 +31,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  const document = SwaggerModule.createDocument(app, config);
+  app.use('/api/v3/api-docs', (_: Request, res: Response) => res.json(document));
+  SwaggerModule.setup('/api/swagger-ui', app, () => document, {
+    swaggerUrl: '/api/v3/api-docs',
+  });
 
-  await app.listen(process.env.port ?? 3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
