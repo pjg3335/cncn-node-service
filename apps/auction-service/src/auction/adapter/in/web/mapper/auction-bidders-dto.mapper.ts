@@ -4,11 +4,11 @@ import { AuctionBiddersCommand } from 'apps/auction-service/src/auction/applicat
 import { AuctionBiddersResponse } from 'apps/auction-service/src/auction/application/port/dto/auction-bidders.response';
 
 export class AuctionBiddersDtoMapper {
-  static toCommand = (dto: AuctionBiddersRequestDto): AuctionBiddersCommand => {
+  static toCommand = (auctionUuid: string, dto: AuctionBiddersRequestDto): AuctionBiddersCommand => {
     const parsed = dto.createdAt ? parseISO(dto.createdAt) : undefined;
     const createdAt = parsed && isValid(parsed) ? parsed : undefined;
     return {
-      auctionUuid: dto.auctionUuid,
+      auctionUuid: auctionUuid,
       cursor:
         dto.bidAmount && createdAt
           ? {

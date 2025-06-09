@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { auctionBidderPropsSchema } from './auction-bidder.schema';
 
 export const auctionBidderForCreatePropsSchema = auctionBidderPropsSchema

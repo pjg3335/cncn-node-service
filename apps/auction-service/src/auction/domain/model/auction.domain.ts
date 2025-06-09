@@ -21,9 +21,13 @@ export default class AuctionDomain {
     if (this.props.currentBid >= bidAmount) {
       return { isValid: false, message: '현재 입찰가보다 높은 입찰가를 입력해주세요.' };
     }
-    const maxAllowed = this.props.currentBid + (this.props.currentBid * AuctionDomain.maxAllowedBidRange) / 100n;
+    const maximumBid = this.props.currentBid > this.props.minimumBid ? this.props.currentBid : this.props.minimumBid;
+    const maxAllowed = maximumBid + (maximumBid * AuctionDomain.maxAllowedBidRange) / 100n;
     if (maxAllowed < bidAmount) {
-      return { isValid: false, message: `최고 입찰가의 ${AuctionDomain.maxAllowedBidRange}%를 초과할 수 없습니다.` };
+      return {
+        isValid: false,
+        message: `최고 입찰가의 ${AuctionDomain.maxAllowedBidRange}%를 초과할 수 없습니다.`,
+      };
     }
     return { isValid: true };
   };

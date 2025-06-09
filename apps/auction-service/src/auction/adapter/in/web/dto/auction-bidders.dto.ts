@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AuctionBiddersRequestDto {
-  @ApiProperty({ type: String })
-  auctionUuid!: string;
-
   @ApiProperty({
     required: false,
     type: Date,

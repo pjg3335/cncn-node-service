@@ -21,7 +21,8 @@ export default class AuctionAdminDomain {
     if (this.props.currentBid >= bidAmount) {
       return { isValid: false, message: '현재 입찰가보다 높은 입찰가를 입력해주세요.' };
     }
-    const maxAllowed = this.props.currentBid + (this.props.currentBid * AuctionAdminDomain.maxAllowedBidRange) / 100n;
+    const maximumBid = this.props.currentBid > this.props.minimumBid ? this.props.currentBid : this.props.minimumBid;
+    const maxAllowed = maximumBid + (maximumBid * AuctionAdminDomain.maxAllowedBidRange) / 100n;
     if (maxAllowed < bidAmount) {
       return {
         isValid: false,
