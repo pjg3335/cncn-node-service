@@ -2,7 +2,9 @@ import { AuctionBiddersCommand } from '../port/dto/auction-bidders.command';
 import { AuctionBiddersResponse } from '../port/dto/auction-bidders.response';
 import { AuctionBiddersUseCase } from '../port/in/auction-bidders.use-case';
 import { AuctionRepositoryPort } from '../port/out/auction-repository.port';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class AuctionBiddersService extends AuctionBiddersUseCase {
   constructor(private readonly auctionRepositoryPort: AuctionRepositoryPort) {
     super();

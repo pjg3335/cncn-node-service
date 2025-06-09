@@ -10,9 +10,20 @@ export type AuctionForCreateProps = z.infer<typeof auctionForCreatePropsSchema>;
 export type AuctionForCreateArgs = Omit<AuctionForCreateProps, 'status' | 'sellerUuid' | 'currentBid'>;
 
 export default class AuctionForCreateDomain {
+  static readonly minimumBid = 1000;
   props: AuctionForCreateProps;
 
   constructor(input: AuctionForCreateArgs, user: User) {
+    if (input.minimumBid < AuctionForCreateDomain.minimumBid) {
+      throw new AppException(
+        {
+          message: `최소 입찰가는 ${AuctionForCreateDomain.minimumBid}원 이상이어야 합니다.`,
+          code: ErrorCode.VALIDATION_ERROR,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     if (input.images.length === 0 || input.images.length > 10) {
       throw new AppException(
         { message: '사진은 1장이상 10장 이하로 등록할 수 있습니다.', code: ErrorCode.VALIDATION_ERROR },

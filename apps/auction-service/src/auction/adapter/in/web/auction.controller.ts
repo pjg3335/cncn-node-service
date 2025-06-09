@@ -110,15 +110,18 @@ export class AuctionController {
     @JwtUser() user: User,
     @Body() requestDto: CreateAuctionBidderRequestDto,
   ): Promise<void> {
-    const command = CreateAuctionBidderDtoMapper.toCommand(auctionUuid, requestDto);
+    const command = CreateAuctionBidderDtoMapper.toCommand(auctionUuid, requestDto, user);
     await this.createAuctionBidderUseCase.execute(command, user);
   }
 
   @Version('1')
   @Get(':auctionUuid/bidders')
   @ApiBearerAuth()
-  async auctionBiddersV1(@Query() requestDto: AuctionBiddersRequestDto): Promise<AuctionBiddersResponseDto> {
-    const command = AuctionBiddersDtoMapper.toCommand(requestDto);
+  async auctionBiddersV1(
+    @Param('auctionUuid') auctionUuid: string,
+    @Query() requestDto: AuctionBiddersRequestDto,
+  ): Promise<AuctionBiddersResponseDto> {
+    const command = AuctionBiddersDtoMapper.toCommand(auctionUuid, requestDto);
     const response = await this.auctionBiddersUseCase.execute(command);
     return AuctionBiddersDtoMapper.fromResponse(response);
   }
