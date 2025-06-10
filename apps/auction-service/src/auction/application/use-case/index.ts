@@ -15,6 +15,8 @@ import { CreateAuctionBidderUseCase } from '../port/in/create-auction-bidder.use
 import { CreateAuctionBidderService } from './create-auction-bidder.service';
 import { AuctionBiddersUseCase } from '../port/in/auction-bidders.use-case';
 import { AuctionBiddersService } from './auction-bidders.service';
+import { AuctionsByIdsUseCase } from '../port/in/auctions-by-ids.use-case';
+import { AuctionsByIdsService } from './auctions-by-ids.service';
 
 export const auctionUseCaseProviders: Provider[] = [
   {
@@ -48,5 +50,9 @@ export const auctionUseCaseProviders: Provider[] = [
   {
     provide: AuctionBiddersUseCase,
     useClass: AuctionBiddersService,
+  },
+  {
+    provide: AuctionsByIdsUseCase,
+    useClass: AuctionsByIdsService,
   },
 ];

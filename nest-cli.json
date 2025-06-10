@@ -15,6 +15,15 @@
         ]
       }
     },
+    "bff-server": {
+      "type": "application",
+      "root": "apps/bff-server",
+      "entryFile": "main",
+      "sourceRoot": "apps/bff-server/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/bff-server/tsconfig.app.json"
+      }
+    },
     "catalog-query-service": {
       "type": "application",
       "root": "apps/catalog-query-service",

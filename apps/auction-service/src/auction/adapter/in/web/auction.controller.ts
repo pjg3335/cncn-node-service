@@ -23,12 +23,16 @@ import { AuctionBiddersResponseDto } from './dto/auction-bidders.dto';
 import { AuctionBiddersRequestDto } from './dto/auction-bidders.dto';
 import { AuctionBiddersDtoMapper } from './mapper/auction-bidders-dto.mapper';
 import { AuctionBiddersUseCase } from '../../../application/port/in/auction-bidders.use-case';
+import { AuctionsByIdsItemResponseDto, AuctionsByIdsRequestDto } from './dto/auctions-by-ids.dto';
+import { AuctionsByIdsUseCase } from '../../../application/port/in/auctions-by-ids.use-case';
+import { AuctionsByIdsDtoMapper } from './mapper/auctions-by-ids-dto.mapper';
 
 @Controller('/auctions')
 export class AuctionController {
   constructor(
     private readonly auctionUseCase: AuctionUseCase,
     private readonly auctionsUseCase: AuctionsUseCase,
+    private readonly auctionsByIdsUseCase: AuctionsByIdsUseCase,
     private readonly createAuctionUseCase: CreateAuctionUseCase,
     private readonly updateAuctionUseCase: UpdateAuctionUseCase,
     private readonly deleteAuctionUseCase: DeleteAuctionUseCase,
@@ -55,6 +59,16 @@ export class AuctionController {
     const command = AuctionsDtoMapper.toCommand(requestDto);
     const response = await this.auctionsUseCase.execute(command);
     return AuctionsDtoMapper.fromResponse(response);
+  }
+
+  @Version('1')
+  @Post('/bulk')
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: [AuctionsByIdsItemResponseDto] })
+  async auctionsByIdsV1(@Body() requestDto: AuctionsByIdsRequestDto): Promise<AuctionsByIdsItemResponseDto[]> {
+    const command = AuctionsByIdsDtoMapper.toCommand(requestDto);
+    const response = await this.auctionsByIdsUseCase.execute(command);
+    return AuctionsByIdsDtoMapper.fromResponse(response);
   }
 
   @Version('1')

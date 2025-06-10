@@ -23,6 +23,8 @@ import { auctionAdminPropsSchema } from '../../../domain/schema/auction-admin.sc
 import { AuctionsCommand } from '../../../application/port/dto/auctions.command';
 import { AuctionsAdminCommand } from '../../../application/port/dto/auctions-admin.command';
 import { AuctionBiddersCommand } from '../../../application/port/dto/auction-bidders.command';
+import { AuctionsByIdsCommand } from '../../../application/port/dto/auctions-by-ids.command';
+import { AuctionsByIdsAdminCommand } from '../../../application/port/dto/auctions-by-ids-admin.command';
 
 @Injectable()
 export class AuctionPrismaRepository extends AuctionRepositoryPort {
@@ -68,6 +70,35 @@ export class AuctionPrismaRepository extends AuctionRepositoryPort {
       return new AuctionDomain(auctionPropsSchema.parse({ ...row, images: row.auctionImages }));
     } else if (type === 'admin') {
       return new AuctionAdminDomain(auctionAdminPropsSchema.parse({ ...row, images: row.auctionImages }));
+    } else {
+      const _exhaustiveCheck: never = type;
+      throw new AppException(
+        { message: _exhaustiveCheck + '는 유효하지 않은 타입입니다.', code: ErrorCode.INTERNAL_VALIDATION_ERROR },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  override findAuctionsByIds(args: AuctionsByIdsCommand): Promise<AuctionDomain[]>;
+  override findAuctionsByIds(args: AuctionsByIdsAdminCommand): Promise<AuctionAdminDomain[]>;
+  override async findAuctionsByIds({
+    type,
+    ids,
+  }: AuctionsByIdsCommand | AuctionsByIdsAdminCommand): Promise<AuctionDomain[] | AuctionAdminDomain[]> {
+    const rows = await this.prisma.auctions.findMany({
+      where: {
+        auctionUuid: { in: ids },
+        ...(type === 'user' && { status: { notIn: ['hidden', 'cancelled'] }, deletedAt: null }),
+      },
+      include: {
+        auctionImages: true,
+      },
+    });
+
+    if (type === 'user') {
+      return rows.map((row) => new AuctionDomain({ ...row, status: 'visible', images: row.auctionImages }));
+    } else if (type === 'admin') {
+      return rows.map((row) => new AuctionAdminDomain({ ...row, images: row.auctionImages }));
     } else {
       const _exhaustiveCheck: never = type;
       throw new AppException(
