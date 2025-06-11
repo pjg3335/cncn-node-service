@@ -9,8 +9,20 @@ import { DeleteAuctionUseCase } from '../port/in/delete-auction.use-case';
 import { DeleteAuctionService } from './delete-auction.service';
 import { PresignedUrlUseCase } from '../port/in/presigned-url.use-case';
 import { PresignedUrlService } from './presigned-url.service';
+import { AuctionUseCase } from '../port/in/auction.use-case';
+import { AuctionService } from './auction.service';
+import { CreateAuctionBidderUseCase } from '../port/in/create-auction-bidder.use-case';
+import { CreateAuctionBidderService } from './create-auction-bidder.service';
+import { AuctionBiddersUseCase } from '../port/in/auction-bidders.use-case';
+import { AuctionBiddersService } from './auction-bidders.service';
+import { AuctionsByIdsUseCase } from '../port/in/auctions-by-ids.use-case';
+import { AuctionsByIdsService } from './auctions-by-ids.service';
 
 export const auctionUseCaseProviders: Provider[] = [
+  {
+    provide: AuctionUseCase,
+    useClass: AuctionService,
+  },
   {
     provide: AuctionsUseCase,
     useClass: AuctionsService,
@@ -30,5 +42,17 @@ export const auctionUseCaseProviders: Provider[] = [
   {
     provide: PresignedUrlUseCase,
     useClass: PresignedUrlService,
+  },
+  {
+    provide: CreateAuctionBidderUseCase,
+    useClass: CreateAuctionBidderService,
+  },
+  {
+    provide: AuctionBiddersUseCase,
+    useClass: AuctionBiddersService,
+  },
+  {
+    provide: AuctionsByIdsUseCase,
+    useClass: AuctionsByIdsService,
   },
 ];

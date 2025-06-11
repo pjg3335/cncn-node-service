@@ -5,6 +5,7 @@ export const ErrorCode = {
   UNAUTHORIZED: 1003,
   INVALID_EXTENSION: 1004,
   FILE_NOT_FOUND: 1005,
+  NOT_FOUND: 1006,
 } satisfies Record<string, number>;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

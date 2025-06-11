@@ -9,9 +9,6 @@ class UpdateAuctionImageRequestDto {
 }
 
 export class UpdateAuctionRequestDto {
-  @ApiProperty({ type: String })
-  auctionUuid!: string;
-
   @ApiProperty({ required: false, type: Number, nullable: true })
   categoryId?: number | null;
 

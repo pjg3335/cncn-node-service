@@ -10,6 +10,7 @@ export const auctionForCreatePropsSchema = auctionPropsSchema
     endAt: true,
     isDirectDeal: true,
     productCondition: true,
+    currentBid: true,
     thumbnailKey: true,
     sellerUuid: true,
   })

@@ -1,6 +1,7 @@
-export type AuctionsCommand =
-  | {
-      auctionUuid: string;
-      createdAt: Date;
-    }
-  | undefined;
+export type AuctionsCommand = {
+  type: 'user';
+  cursor?: {
+    auctionUuid: string;
+    createdAt: Date;
+  };
+};

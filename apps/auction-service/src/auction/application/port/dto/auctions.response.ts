@@ -9,7 +9,7 @@ type AuctionsImageResponse = {
   order: number;
 };
 
-type AuctionsItemCommonResponse = {
+type AuctionsItemResponse = {
   auctionUuid: string;
   categoryId?: number | null;
   title: string;
@@ -19,6 +19,7 @@ type AuctionsItemCommonResponse = {
   endAt: Date;
   isDirectDeal: boolean;
   directDealLocation?: string | null;
+  status: 'waiting' | 'active' | 'ended';
   productCondition: 'unopened' | 'new' | 'used';
   viewCount: bigint;
   thumbnailUrl: string;
@@ -27,20 +28,7 @@ type AuctionsItemCommonResponse = {
   images: AuctionsImageResponse[];
 };
 
-type AuctionsUserResponse = {
-  type: 'user';
-  items: (AuctionsItemCommonResponse & {
-    status: 'waiting' | 'active' | 'ended';
-  })[];
+export type AuctionsResponse = {
+  items: AuctionsItemResponse[];
   nextCursor: AuctionsNextCursorResponse | null;
 };
-
-type AuctionsAdminResponse = {
-  type: 'admin';
-  items: (AuctionsItemCommonResponse & {
-    status: 'waiting' | 'active' | 'ended' | 'hidden' | 'cancelled';
-  })[];
-  nextCursor: AuctionsNextCursorResponse | null;
-};
-
-export type AuctionsResponse = AuctionsUserResponse | AuctionsAdminResponse;
