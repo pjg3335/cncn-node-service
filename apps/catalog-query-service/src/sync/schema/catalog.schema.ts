@@ -3,20 +3,20 @@ import { AuctionSchema } from './auction.schema';
 import { categorySchema } from './category.schema';
 import { tagSchema } from './tag.schema';
 
-export const CatalogAuctionSchema = z
+export const catalogAuctionSchema = z
   .object({
     type: z.enum(['auction']),
     category: categorySchema.nullable(),
     tags: z.array(tagSchema),
   })
   .merge(AuctionSchema);
-export type CatalogAuction = z.infer<typeof CatalogAuctionSchema>;
+export type CatalogAuction = z.infer<typeof catalogAuctionSchema>;
 
-export const CatalogProductSchema = z.object({
+export const catalogProductSchema = z.object({
   type: z.enum(['product']),
 });
-export type CatalogProduct = z.infer<typeof CatalogProductSchema>;
+export type CatalogProduct = z.infer<typeof catalogProductSchema>;
 
-export const CatalogSchema = z.union([CatalogAuctionSchema, CatalogProductSchema]);
+export const catalogSchema = z.union([catalogAuctionSchema, catalogProductSchema]);
 
-export type Catalog = z.infer<typeof CatalogSchema>;
+export type Catalog = z.infer<typeof catalogSchema>;
