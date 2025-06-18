@@ -11,11 +11,11 @@ import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
 import * as Apply from 'fp-ts/Apply';
 import axios from 'axios';
-import { AuctionChangedValue } from '../../../../libs/common/src/schema/auction-changed.schema';
 import { U } from '@app/common/utils/fp-ts';
 import { ConfigService } from '@nestjs/config';
 import { EnvSchema } from '../common/env-schema';
 import { SyncRepository } from './sync.repository';
+import { AuctionChangedValue } from '@app/common';
 
 @Injectable()
 export class SyncFn {
