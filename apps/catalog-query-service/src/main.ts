@@ -33,7 +33,7 @@ async function bootstrap() {
     .setDescription('API에 대한 설명')
     .setVersion('1.0')
     .addBearerAuth()
-    // .addServer('/catalog-query-service')
+    .addServer('/catalog-query-service')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   app.use('/v3/api-docs', (_: FastifyRequest, res: FastifyReply) => res.send(document));
