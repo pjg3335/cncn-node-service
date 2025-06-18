@@ -12,7 +12,7 @@ import { ErrorCode } from '@app/common';
 export class SyncService {
   constructor(private readonly fn: SyncFn) {}
 
-  changeAuction = async (auctionChangedValues: AuctionChangedValue[]) => {
+  changeAuction = async (auctionChangedValues: AuctionChangedValue[]): Promise<void> => {
     const data = await F.pipe(
       auctionChangedValues,
       A.findFirst((o) => o.op === 'd'),
