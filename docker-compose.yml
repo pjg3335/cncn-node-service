@@ -39,8 +39,6 @@ services:
       - ./libs/common/.env
       - ./apps/catalog-query-service/.env
     depends_on:
-      mongo:
-        condition: service_healthy
       kafka1:
         condition: service_healthy
       kafka2:

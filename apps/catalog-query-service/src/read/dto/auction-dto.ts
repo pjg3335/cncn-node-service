@@ -40,9 +40,6 @@ export class AuctionResponseDto {
   @ApiProperty({ type: Number })
   version!: number;
 
-  @ApiProperty({ type: String })
-  sellerUuid!: string;
-
   @ApiProperty({ type: Number })
   currentBid!: number;
 }
@@ -69,6 +66,26 @@ export class TagResponseDto {
   name!: string;
 }
 
+export class MemberResponseDto {
+  @ApiProperty({ type: String })
+  memberUuid!: string;
+
+  @ApiProperty({ type: String })
+  nickname!: string;
+
+  @ApiProperty({ type: String })
+  gradeUuid!: string;
+
+  @ApiProperty({ enum: ['NICE_GUY', 'GOOD_BOY', 'REAL_MAN'] })
+  honor!: string;
+
+  @ApiProperty({ enum: ['ACTIVE', 'INACTIVE', 'BLOCKED'] })
+  state!: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  profileImageUrl!: string | null;
+}
+
 export class CatalogAuctionResponseDto extends AuctionResponseDto {
   @ApiProperty({ enum: ['auction'] })
   type!: 'auction';
@@ -78,4 +95,7 @@ export class CatalogAuctionResponseDto extends AuctionResponseDto {
 
   @ApiProperty({ type: [TagResponseDto] })
   tags!: TagResponseDto[];
+
+  @ApiProperty({ type: MemberResponseDto })
+  seller!: MemberResponseDto;
 }

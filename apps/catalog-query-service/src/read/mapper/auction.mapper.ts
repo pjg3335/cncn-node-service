@@ -1,8 +1,8 @@
-import { CatalogAuction } from '../../sync/schema/catalog.schema';
 import { CatalogAuctionResponseDto } from '../dto/auction-dto';
+import { Auction } from '../schema/auction.schema';
 
 export class AuctionMapper {
-  static toResponseDto = (auction: CatalogAuction): CatalogAuctionResponseDto => {
+  static toResponseDto = (auction: Auction): CatalogAuctionResponseDto => {
     return {
       ...auction,
       startAt: auction.startAt.toISOString(),

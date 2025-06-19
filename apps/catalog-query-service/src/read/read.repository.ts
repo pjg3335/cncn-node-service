@@ -3,9 +3,10 @@ import { Db } from 'mongodb';
 import { CatalogAuction } from '../sync/schema/catalog.schema';
 import * as F from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
+import * as A from 'fp-ts/Array';
+import * as E from 'fp-ts/Either';
 import { ReadFn } from './read.fn';
-import { AppException } from '@app/common/common/app.exception';
-import { ErrorCode } from '@app/common';
+import { ErrorCode, AppException, U } from '@app/common';
 
 @Injectable()
 export class ReadRepository {
@@ -14,19 +15,20 @@ export class ReadRepository {
     private readonly fn: ReadFn,
   ) {}
 
-  findAuction = (auctionUuid: string): TE.TaskEither<AppException, CatalogAuction> => {
+  findAuction = (auctionUuids: string[]): TE.TaskEither<AppException, CatalogAuction[]> => {
     return F.pipe(
       TE.tryCatch(
-        () => this.db.collection('catalog').findOne({ _id: auctionUuid as any }),
+        () =>
+          this.db
+            .collection('catalog')
+            .find({ _id: { $in: auctionUuids as any[] } })
+            .toArray(),
         (error) =>
           new AppException({ code: ErrorCode.DB_ERROR, message: String(error) }, HttpStatus.INTERNAL_SERVER_ERROR),
       ),
-      TE.flatMap(
-        TE.fromNullable(
-          new AppException({ code: ErrorCode.NOT_FOUND, message: '해당 경매가 없습니다.' }, HttpStatus.NOT_FOUND),
-        ),
-      ),
-      TE.flatMap(F.flow(this.fn.parseAuction, TE.fromEither)),
+      TE.map(A.map(this.fn.parseAuction)),
+      TE.map(A.sequence(E.Applicative)),
+      TE.flatMap(TE.fromEither),
     );
   };
 }

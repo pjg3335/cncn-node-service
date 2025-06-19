@@ -4,8 +4,8 @@ import { ApiOkResponse } from '@nestjs/swagger';
 import { ReadService } from './read.service';
 import * as TE from 'fp-ts/TaskEither';
 import * as F from 'fp-ts/function';
-import { AppException } from '@app/common/common/app.exception';
 import { AuctionMapper } from './mapper/auction.mapper';
+import { AppException } from '@app/common';
 
 @Controller()
 export class ReadController {
@@ -15,6 +15,6 @@ export class ReadController {
   @Version('1')
   @ApiOkResponse({ type: CatalogAuctionResponseDto })
   getAuction(@Param('auctionUuid') auctionUuid: string): TE.TaskEither<AppException, CatalogAuctionResponseDto> {
-    return F.pipe(this.readService.getAuction(auctionUuid), TE.map(AuctionMapper.toResponseDto));
+    return F.pipe(this.readService.auction(auctionUuid), TE.map(AuctionMapper.toResponseDto));
   }
 }
