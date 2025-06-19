@@ -5,8 +5,7 @@ import * as O from 'fp-ts/Option';
 import * as E from 'fp-ts/Either';
 import { SyncFn } from './sync.fn';
 import { AuctionChangedValue } from '../../../../libs/common/src/schema/auction-changed.schema';
-import { AppException } from '@app/common/common/app.exception';
-import { ErrorCode } from '@app/common';
+import { ErrorCode, AppException } from '@app/common';
 
 @Injectable()
 export class SyncService {
