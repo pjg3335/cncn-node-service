@@ -46,20 +46,49 @@ services:
       kafka3:
         condition: service_healthy
 
-  bff-server:
+  notification-consumer-service:
     build:
       context: .
-      dockerfile: ./apps/bff-server/Dockerfile
+      dockerfile: ./apps/notification-consumer-service/Dockerfile
       target: development
-    command: pnpm run start:dev bff-server
+    command: pnpm run start:dev notification-consumer-service
     ports:
       - '3003:3000'
     volumes:
-      - ./apps/bff-server:/usr/src/app/apps/bff-server
+      - ./apps/notification-consumer-service:/usr/src/app/apps/notification-consumer-service
       - ./libs:/usr/src/app/libs
     env_file:
       - ./libs/common/.env
-      - ./apps/bff-server/.env
+      - ./apps/notification-consumer-service/.env
+    depends_on:
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+      kafka3:
+        condition: service_healthy
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: ./apps/notification-service/Dockerfile
+      target: development
+    command: pnpm run start:dev notification-service
+    ports:
+      - '3004:3000'
+    volumes:
+      - ./apps/notification-service:/usr/src/app/apps/notification-service
+      - ./libs:/usr/src/app/libs
+    env_file:
+      - ./libs/common/.env
+      - ./apps/notification-service/.env
+    depends_on:
+      kafka1:
+        condition: service_healthy
+      kafka2:
+        condition: service_healthy
+      kafka3:
+        condition: service_healthy
 
   mongo:
     image: mongo:8
