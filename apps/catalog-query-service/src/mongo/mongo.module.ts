@@ -11,7 +11,7 @@ import { EnvSchema } from '../common/env-schema';
       provide: 'MONGO_DB',
       inject: [ConfigService],
       useFactory: async (configService: ConfigService<EnvSchema>) => {
-        const uri = configService.getOrThrow('MONGO_URL');
+        const uri = `${configService.getOrThrow('MONGO_URL')}catalog-query-service`;
         const client = await MongoClient.connect(uri);
         return client.db('catalog-query-service');
       },
