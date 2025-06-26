@@ -3,6 +3,7 @@ import { CatalogAuction } from '../sync/schema/catalog.schema';
 import * as F from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
+import * as A from 'fp-ts/Array';
 import { catalogAuctionSchema } from '../sync/schema/catalog.schema';
 import { ErrorCode, AppException } from '@app/common';
 import axios from 'axios';
@@ -10,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { EnvSchema } from '../common/env-schema';
 import { z } from 'zod';
 import { RemoteMember, remoteMemberSchema } from './schema/remote-member.schema';
+import { Thumbnail, thumbnailSchema } from './schema/thumbnail-schema';
 
 @Injectable()
 export class ReadFn {
@@ -23,6 +25,16 @@ export class ReadFn {
           { code: ErrorCode.INTERNAL_VALIDATION_ERROR, message: String(error) },
           HttpStatus.INTERNAL_SERVER_ERROR,
         ),
+    );
+  };
+
+  parseThumbnails = (thumbnails: any[]): Thumbnail[] => {
+    return F.pipe(
+      thumbnails,
+      A.map((row) => ({ ...row, id: row._id })),
+      A.map(thumbnailSchema.safeParse),
+      A.filter((thumbnail) => thumbnail.success),
+      A.map((thumbnail) => thumbnail.data),
     );
   };
 

@@ -1,12 +1,13 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Db } from 'mongodb';
-import { CatalogAuction } from '../sync/schema/catalog.schema';
+import { Catalog, CatalogAuction } from '../sync/schema/catalog.schema';
 import * as F from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import * as A from 'fp-ts/Array';
 import * as E from 'fp-ts/Either';
 import { ReadFn } from './read.fn';
-import { ErrorCode, AppException, U } from '@app/common';
+import { ErrorCode, AppException, MongoProjection } from '@app/common';
+import { Thumbnail } from './schema/thumbnail-schema';
 
 @Injectable()
 export class ReadRepository {
@@ -29,6 +30,30 @@ export class ReadRepository {
       TE.map(A.map(this.fn.parseAuction)),
       TE.map(A.sequence(E.Applicative)),
       TE.flatMap(TE.fromEither),
+    );
+  };
+
+  findThumbnails = (ids: string[]): TE.TaskEither<AppException, Thumbnail[]> => {
+    return F.pipe(
+      TE.tryCatch(
+        () =>
+          this.db
+            .collection('catalog')
+            .find(
+              { _id: { $in: ids as any[] } },
+              {
+                projection: {
+                  _id: 1,
+                  thumbnailUrl: 1,
+                  type: 1,
+                } satisfies MongoProjection<Catalog>,
+              },
+            )
+            .toArray(),
+        (error) =>
+          new AppException({ code: ErrorCode.DB_ERROR, message: String(error) }, HttpStatus.INTERNAL_SERVER_ERROR),
+      ),
+      TE.map(this.fn.parseThumbnails),
     );
   };
 }

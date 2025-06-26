@@ -33,6 +33,10 @@ export const auctionChangedValueSchema = z
       currentBid: z.number(),
       tagIds: z.array(z.number()),
       status: z.enum(['visible']),
+      soldAt: z.preprocess(
+        (arg) => (typeof arg === 'string' || typeof arg === 'number' ? new Date(arg) : arg),
+        z.date().nullable(),
+      ),
       productCondition: z.enum(['unopened', 'new', 'used']),
       images: z.array(
         z.object({
