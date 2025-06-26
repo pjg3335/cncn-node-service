@@ -8,6 +8,7 @@ export class AuctionMapper {
     return {
       ...auction,
       status: AuctionMapper.mapAuctionStatus(auction),
+      soldAt: auction.soldAt ? auction.soldAt.toISOString() : null,
       startAt: auction.startAt.toISOString(),
       endAt: auction.endAt.toISOString(),
       createdAt: auction.createdAt.toISOString(),

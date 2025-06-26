@@ -17,6 +17,10 @@ export const remoteAuctionSchema = z.object({
     (arg) => (typeof arg === 'string' || typeof arg === 'number' ? new Date(arg) : arg),
     z.date(),
   ),
+  soldAt: z.preprocess(
+    (arg) => (typeof arg === 'string' || typeof arg === 'number' ? new Date(arg) : arg),
+    z.date().nullable().optional(),
+  ),
   images: z.array(
     z.object({
       auctionImageId: z.number(),

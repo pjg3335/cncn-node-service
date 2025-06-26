@@ -37,6 +37,9 @@ export class AuctionResponseDto {
   @ApiProperty({ type: Date })
   createdAt!: string;
 
+  @ApiProperty({ type: Date, nullable: true })
+  soldAt!: string | null;
+
   @ApiProperty({ type: Number })
   version!: number;
 

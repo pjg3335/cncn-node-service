@@ -1,4 +1,5 @@
 import AuctionAdminDomain from '../../../domain/model/auction-admin.domain';
+import AuctionBidderForCreateBatchDomain from '../../../domain/model/auction-bidder-for-create-batch.domain';
 import AuctionBidderForCreateDomain from '../../../domain/model/auction-bidder-for-create.domain';
 import AuctionBidderDomain from '../../../domain/model/auction-bidder.domain';
 import AuctionForCreateDomain from '../../../domain/model/auction-for-create.domain';
@@ -29,7 +30,7 @@ export abstract class AuctionRepositoryPort {
 
   abstract findAuction(args: AuctionCommand): Promise<AuctionDomain>;
   abstract findAuction(args: AuctionAdminCommand): Promise<AuctionAdminDomain>;
-  abstract findAcutionCurrentBidderForUpdate: (auctionUuid: string, tx?: TX) => Promise<string | null>;
+  abstract findAcutionForUpdate: (auctionUuid: string, tx?: TX) => Promise<AuctionDomain>;
 
   abstract findAuctions(args: AuctionsCommand): Promise<AuctionsReturn>;
   abstract findAuctions(args: AuctionsAdminCommand): Promise<AuctionsAdminReturn>;
@@ -40,12 +41,19 @@ export abstract class AuctionRepositoryPort {
   abstract createAuction: (auctionForCreate: AuctionForCreateDomain) => Promise<AuctionDomain>;
 
   abstract updateAuction: (auctionForUpdate: AuctionForUpdateDomain) => Promise<AuctionDomain>;
+  abstract updateAuctionCurrent: (
+    auctionUuid: string,
+    currentBid: bigint,
+    currentBidderUuid: string,
+    tx?: TX,
+  ) => Promise<void>;
 
   abstract deleteAuction: (auctionForDelete: AuctionForDeleteDomain) => Promise<void>;
 
   abstract findHighestBidder: (auctionUuid: string) => Promise<AuctionBidderDomain | undefined>;
 
   abstract createAuctionBidder: (auctionBidder: AuctionBidderForCreateDomain, tx?: TX) => Promise<void>;
+  abstract createAuctionBidders: (auctionBidder: AuctionBidderForCreateBatchDomain, tx?: TX) => Promise<void>;
 
   abstract updateAuctionCurrentBid: (
     auctionUuid: string,
