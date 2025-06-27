@@ -2,8 +2,8 @@ import { KafkaService } from '@app/common/kafka/kafka.service';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Batch, Consumer, KafkaMessage } from 'kafkajs';
 import { CreateAuctionBidderBatchUseCase } from '../../../application/port/in/create-auction-bidder-batch.use-case';
-import { DlqTopicValue } from '@app/common/schema/dlq-topic.schema';
-import { auctionViewedTopicValueSchema } from '@app/common/schema/acution-viewed-topic.schema';
+import { KafkaDlqTopicValue } from '@app/common/schema/kafka-dlq-topic.schema';
+import { kafkaAuctionViewedTopicValueSchema } from '@app/common/schema/kafka-acution-viewed-topic.schema';
 import { AuctionViewedUseCase } from '../../../application/port/in/view-auction-batch.use-case';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class CatalogQueryServiceAuctionViewedConsumer implements OnModuleInit, O
   private parseMessages = (messages: KafkaMessage[]) => {
     return messages
       .map((message) => ({ value: message.value?.toString() ?? '{}', viewedAt: new Date(Number(message.timestamp)) }))
-      .map(({ value, viewedAt }) => ({ ...auctionViewedTopicValueSchema.parse(JSON.parse(value)), viewedAt }));
+      .map(({ value, viewedAt }) => ({ ...kafkaAuctionViewedTopicValueSchema.parse(JSON.parse(value)), viewedAt }));
   };
 
   private commit = async (batch: Batch, resolveOffset: (offset: string) => void) => {
@@ -44,7 +44,7 @@ export class CatalogQueryServiceAuctionViewedConsumer implements OnModuleInit, O
             topic: batch.topic,
             error: String(error),
             timestamp: new Date(),
-          } satisfies DlqTopicValue),
+          } satisfies KafkaDlqTopicValue),
         },
       ],
     });

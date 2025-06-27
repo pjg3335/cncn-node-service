@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const dlqTopicValueSchema = z.object({
+export const kafkaDlqTopicValueSchema = z.object({
   startOffset: z.string().nullable(),
   lastOffset: z.string(),
   partition: z.number(),
@@ -9,4 +9,4 @@ export const dlqTopicValueSchema = z.object({
   timestamp: z.date(),
 });
 
-export type DlqTopicValue = z.infer<typeof dlqTopicValueSchema>;
+export type KafkaDlqTopicValue = z.infer<typeof kafkaDlqTopicValueSchema>;

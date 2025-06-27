@@ -4,7 +4,7 @@ import { auctionServiceBidderCreatedSchema } from './schema/auction-bidder-creat
 import { Batch, Consumer, KafkaMessage } from 'kafkajs';
 import { CreateAuctionBidderBatchUseCase } from '../../../application/port/in/create-auction-bidder-batch.use-case';
 import { AuctionServiceBidderCreatedDtoMapper } from './mapper/auction-service-bidder-created-dto.mapper';
-import { DlqTopicValue } from '@app/common/schema/dlq-topic.schema';
+import { KafkaDlqTopicValue } from '@app/common/schema/kafka-dlq-topic.schema';
 
 @Injectable()
 export class AuctionServiceBidderCreatedConsumer implements OnModuleInit, OnModuleDestroy {
@@ -45,7 +45,7 @@ export class AuctionServiceBidderCreatedConsumer implements OnModuleInit, OnModu
             topic: batch.topic,
             error: String(error),
             timestamp: new Date(),
-          } satisfies DlqTopicValue),
+          } satisfies KafkaDlqTopicValue),
         },
       ],
     });

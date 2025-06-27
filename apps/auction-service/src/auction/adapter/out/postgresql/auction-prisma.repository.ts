@@ -14,7 +14,7 @@ import {
 } from '../../../application/port/out/auction-repository.port.type';
 import AuctionBidderForCreateDomain from '../../../domain/model/auction-bidder-for-create.domain';
 import AuctionBidderDomain from '../../../domain/model/auction-bidder.domain';
-import { AuctionChangedTopicValue, ErrorCode, AppException } from '@app/common';
+import { ErrorCode, AppException, KafkaAuctionServiceOutboxTopicValue } from '@app/common';
 import { AuctionCommand } from '../../../application/port/dto/auction.command';
 import { AuctionAdminCommand } from '../../../application/port/dto/auction-admin.command';
 import AuctionAdminDomain from '../../../domain/model/auction-admin.domain';
@@ -410,7 +410,7 @@ export class AuctionPrismaRepository extends AuctionRepositoryPort {
     const prisma = tx ?? this.prisma;
     const snapshot = auction.getSnapshot();
     const { auctionId: _, ...row } = snapshot;
-    const auctionChangedValue: AuctionChangedTopicValue = {
+    const auctionChangedValue: KafkaAuctionServiceOutboxTopicValue = {
       aggregateType: 'auction',
       aggregateId: snapshot.auctionUuid,
       eventType: op === 'c' ? 'AuctionCreated' : op === 'u' ? 'AuctionUpdated' : 'AuctionDeleted',

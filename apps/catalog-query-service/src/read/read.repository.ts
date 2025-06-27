@@ -1,6 +1,6 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { Db } from 'mongodb';
-import { Catalog, CatalogAuction } from '../sync/schema/catalog.schema';
+import { MongoCatalog, MongoCatalogTypeAuction, MongoCatalogTypeProduct } from '../common/schema/mongo-catalog.schema';
 import * as F from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
 import * as A from 'fp-ts/Array';
@@ -16,7 +16,7 @@ export class ReadRepository {
     private readonly fn: ReadFn,
   ) {}
 
-  findAuction = (auctionUuids: string[]): TE.TaskEither<AppException, CatalogAuction[]> => {
+  findAuctions = (auctionUuids: string[]): TE.TaskEither<AppException, MongoCatalogTypeAuction[]> => {
     return F.pipe(
       TE.tryCatch(
         () =>
@@ -28,6 +28,23 @@ export class ReadRepository {
           new AppException({ code: ErrorCode.DB_ERROR, message: String(error) }, HttpStatus.INTERNAL_SERVER_ERROR),
       ),
       TE.map(A.map(this.fn.parseAuction)),
+      TE.map(A.sequence(E.Applicative)),
+      TE.flatMap(TE.fromEither),
+    );
+  };
+
+  findProducts = (productUuids: string[]): TE.TaskEither<AppException, MongoCatalogTypeProduct[]> => {
+    return F.pipe(
+      TE.tryCatch(
+        () =>
+          this.db
+            .collection('catalog')
+            .find({ _id: { $in: productUuids as any[] } })
+            .toArray(),
+        (error) =>
+          new AppException({ code: ErrorCode.DB_ERROR, message: String(error) }, HttpStatus.INTERNAL_SERVER_ERROR),
+      ),
+      TE.map(A.map(this.fn.parseProduct)),
       TE.map(A.sequence(E.Applicative)),
       TE.flatMap(TE.fromEither),
     );
@@ -46,7 +63,7 @@ export class ReadRepository {
                   _id: 1,
                   thumbnailUrl: 1,
                   type: 1,
-                } satisfies MongoProjection<Catalog>,
+                } satisfies MongoProjection<MongoCatalog>,
               },
             )
             .toArray(),
