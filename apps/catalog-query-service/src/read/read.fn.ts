@@ -5,17 +5,22 @@ import * as TE from 'fp-ts/TaskEither';
 import * as E from 'fp-ts/Either';
 import * as A from 'fp-ts/Array';
 import { catalogAuctionSchema } from '../sync/schema/catalog.schema';
-import { ErrorCode, AppException } from '@app/common';
+import { ErrorCode, AppException, User } from '@app/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { EnvSchema } from '../common/env-schema';
 import { z } from 'zod';
 import { RemoteMember, remoteMemberSchema } from './schema/remote-member.schema';
 import { Thumbnail, thumbnailSchema } from './schema/thumbnail-schema';
+import { KafkaService } from '@app/common/kafka/kafka.service';
+import { AuctionViewedTopicValue } from '@app/common/schema/acution-viewed-topic.schema';
 
 @Injectable()
 export class ReadFn {
-  constructor(private readonly configService: ConfigService<EnvSchema>) {}
+  constructor(
+    private readonly configService: ConfigService<EnvSchema>,
+    private readonly kafkaService: KafkaService,
+  ) {}
 
   parseAuction = (auction: any): E.Either<AppException, CatalogAuction> => {
     return E.tryCatch(
@@ -64,5 +69,17 @@ export class ReadFn {
         ),
       ),
     );
+  };
+
+  sendAuctionViewed = async (auctionUuid: string, user: User) => {
+    await this.kafkaService.send({
+      topic: 'catalog-query-service.auction.viewed',
+      messages: [
+        {
+          key: auctionUuid,
+          value: JSON.stringify({ auctionUuid, viewerUuid: user.memberUuid } satisfies AuctionViewedTopicValue),
+        },
+      ],
+    });
   };
 }

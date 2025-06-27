@@ -1,7 +1,7 @@
 import { auctionBidderPropsSchema } from './auction-bidder.schema';
 import { auctionPropsSchema } from './auction.schema';
 
-export const auctionBidderForCreateBatchPropsSchema = auctionBidderPropsSchema
+export const auctionBidderForCreateBulkPropsSchema = auctionBidderPropsSchema
   .pick({
     auctionId: true,
     bidderUuid: true,

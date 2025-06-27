@@ -14,7 +14,7 @@ import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { EnvSchema } from '../common/env-schema';
 import { SyncRepository } from './sync.repository';
-import { AuctionChangedValue, U } from '@app/common';
+import { AuctionChangedTopicValue, U } from '@app/common';
 
 @Injectable()
 export class SyncFn {
@@ -68,7 +68,7 @@ export class SyncFn {
     );
   };
 
-  upsertAuction = (auctionChangedValues: AuctionChangedValue[]): TE.TaskEither<string, void> => {
+  upsertAuction = (auctionChangedValues: AuctionChangedTopicValue[]): TE.TaskEither<string, void> => {
     return F.pipe(
       auctionChangedValues,
       A.map((o) => o.payload),

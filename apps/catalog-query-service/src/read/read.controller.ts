@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Post, Version } from '@nestjs/common';
 import { CatalogAuctionResponseDto } from './dto/auction-dto';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { ReadService } from './read.service';
 import * as TE from 'fp-ts/TaskEither';
 import * as F from 'fp-ts/function';
 import { AuctionMapper } from './mapper/auction.mapper';
-import { AppException } from '@app/common';
+import { AppException, JwtUser, User } from '@app/common';
 import { ThumbnailsRequestDto, ThumbnailsResponseDto } from './dto/thumbnails-dto';
 
 @Controller()
@@ -14,9 +14,13 @@ export class ReadController {
 
   @Get('auctions/:auctionUuid')
   @Version('1')
+  @ApiBearerAuth()
   @ApiOkResponse({ type: CatalogAuctionResponseDto })
-  getAuction(@Param('auctionUuid') auctionUuid: string): TE.TaskEither<AppException, CatalogAuctionResponseDto> {
-    return F.pipe(this.readService.auction(auctionUuid), TE.map(AuctionMapper.toResponseDto));
+  getAuction(
+    @Param('auctionUuid') auctionUuid: string,
+    @JwtUser() user: User,
+  ): TE.TaskEither<AppException, CatalogAuctionResponseDto> {
+    return F.pipe(this.readService.auction(auctionUuid, user), TE.map(AuctionMapper.toResponseDto));
   }
 
   @Post('catalogs/thumbnails')

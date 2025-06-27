@@ -6,7 +6,7 @@ import * as NEA from 'fp-ts/NonEmptyArray';
 import * as O from 'fp-ts/Option';
 import * as TE from 'fp-ts/TaskEither';
 import { ReadFn } from './read.fn';
-import { AppException, ErrorCode } from '@app/common';
+import { AppException, ErrorCode, User } from '@app/common';
 import * as Str from 'fp-ts/string';
 import { Auction } from './schema/auction.schema';
 import { Thumbnail } from './schema/thumbnail-schema';
@@ -17,7 +17,6 @@ export class ReadService {
   constructor(
     private readonly readRepository: ReadRepository,
     private readonly fn: ReadFn,
-    private readonly kafkaService: KafkaService,
   ) {}
 
   auctions = (auctionUuids: string[]): TE.TaskEither<AppException, Auction[]> => {
@@ -50,7 +49,7 @@ export class ReadService {
     );
   };
 
-  auction = (auctionUuid: string): TE.TaskEither<AppException, Auction> => {
+  auction = (auctionUuid: string, user: User): TE.TaskEither<AppException, Auction> => {
     return F.pipe(
       this.auctions([auctionUuid]),
       TE.map(A.head),
@@ -63,12 +62,10 @@ export class ReadService {
             ),
         ),
       ),
-      TE.tap((auction) =>
-        F.pipe(
-          TE.right(1),
-          TE.orElseW(() => TE.right(undefined)),
-        ),
-      ),
+      TE.map((auction) => {
+        this.fn.sendAuctionViewed(auctionUuid, user);
+        return auction;
+      }),
     );
   };
 

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const auctionChangedValueSchema = z
+export const auctionChangedTopicValueSchema = z
   .object({
     aggregateType: z.string(),
     aggregateId: z.string(),
@@ -49,4 +49,4 @@ export const auctionChangedValueSchema = z
   })
   .strip();
 
-export type AuctionChangedValue = z.infer<typeof auctionChangedValueSchema>;
+export type AuctionChangedTopicValue = z.infer<typeof auctionChangedTopicValueSchema>;

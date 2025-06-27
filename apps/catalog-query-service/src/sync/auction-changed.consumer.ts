@@ -3,7 +3,8 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Consumer } from 'kafkajs';
 import { SyncService } from './sync.service';
 import { outboxSchema } from './schema/outbox.schema';
-import { auctionChangedValueSchema } from '@app/common';
+import { auctionChangedTopicValueSchema } from '@app/common';
+import { DlqTopicValue } from '@app/common/schema/dlq-topic.schema';
 
 @Injectable()
 export class AuctionChangedConsumer implements OnModuleInit, OnModuleDestroy {
@@ -41,7 +42,7 @@ export class AuctionChangedConsumer implements OnModuleInit, OnModuleDestroy {
                 value.eventType === 'AuctionUpdated' ||
                 value.eventType === 'AuctionDeleted',
             )
-            .map((value) => auctionChangedValueSchema.parse(value));
+            .map((value) => auctionChangedTopicValueSchema.parse(value));
 
           if (values.length !== 0) await this.syncService.changeAuction(values);
 
@@ -64,7 +65,7 @@ export class AuctionChangedConsumer implements OnModuleInit, OnModuleDestroy {
                     topic: batch.topic,
                     error: String(error),
                     timestamp: new Date(),
-                  }),
+                  } satisfies DlqTopicValue),
                 },
               ],
             });

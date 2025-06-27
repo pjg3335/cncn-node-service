@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { auctionBidderForCreateBatchPropsSchema } from '../schema/auction-bidder-for-create-batch.schema';
+import { auctionBidderForCreateBulkPropsSchema } from '../schema/auction-bidder-for-create-bulk.schema';
 import AuctionDomain from './auction.domain';
 import * as F from 'fp-ts/function';
 import * as A from 'fp-ts/Array';
@@ -9,21 +9,21 @@ import * as NEA from 'fp-ts/NonEmptyArray';
 import * as Rec from 'fp-ts/Record';
 import { U } from '@app/common';
 
-export type AuctionBidderForCreateBatchProps = z.infer<typeof auctionBidderForCreateBatchPropsSchema>;
+export type AuctionBidderForCreateBulkProps = z.infer<typeof auctionBidderForCreateBulkPropsSchema>;
 
-export type AuctionBidderForCreateBatchArgs = {
+export type AuctionBidderForCreateBulkArgs = {
   auction: AuctionDomain;
-  bidders: AuctionBidderForCreateBatchProps[];
+  bidders: AuctionBidderForCreateBulkProps[];
 };
 
-export default class AuctionBidderForCreateBatchDomain {
-  props: AuctionBidderForCreateBatchProps[];
+export default class AuctionBidderForCreateBulkDomain {
+  props: AuctionBidderForCreateBulkProps[];
 
-  constructor({ bidders, auction }: AuctionBidderForCreateBatchArgs) {
+  constructor({ bidders, auction }: AuctionBidderForCreateBulkArgs) {
     const nowAuction = auction.getSnapshot();
 
     const byBidAmount = Ord.reverse(
-      Ord.contramap((bidder: AuctionBidderForCreateBatchProps) => Number(bidder.bidAmount))(Num.Ord),
+      Ord.contramap((bidder: AuctionBidderForCreateBulkProps) => Number(bidder.bidAmount))(Num.Ord),
     );
 
     const newBidders = F.pipe(
@@ -39,8 +39,8 @@ export default class AuctionBidderForCreateBatchDomain {
       U.A.dropLastIf((bidder) => bidder.bidderUuid === nowAuction.currentBidderUuid), // 현재 입찰자는 제외
     );
 
-    const props: AuctionBidderForCreateBatchProps[] = newBidders;
-    this.props = auctionBidderForCreateBatchPropsSchema.array().parse(props);
+    const props: AuctionBidderForCreateBulkProps[] = newBidders;
+    this.props = auctionBidderForCreateBulkPropsSchema.array().parse(props);
   }
 
   getSnapshot = () => {
@@ -48,7 +48,7 @@ export default class AuctionBidderForCreateBatchDomain {
   };
 
   /** 결과적으로 최고 입찰자가 되는 입찰자 */
-  getCurrent = (): AuctionBidderForCreateBatchProps | undefined => {
+  getCurrent = (): AuctionBidderForCreateBulkProps | undefined => {
     return this.props[0];
   };
 }

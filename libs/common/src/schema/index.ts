@@ -1,1 +1,1 @@
-export * from './auction-changed.schema';
+export * from './auction-changed-topic.schema';
