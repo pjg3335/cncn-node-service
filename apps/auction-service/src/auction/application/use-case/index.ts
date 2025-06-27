@@ -23,6 +23,8 @@ import { CreateAuctionBidderBatchUseCase } from '../port/in/create-auction-bidde
 import { CreateAuctionBidderBatchService } from './create-auction-bidder-batch.service';
 import { AuctionSoldUseCase } from '../port/in/auction-sold.use-case';
 import { AuctionSoldService } from './auction-sold.service';
+import { AuctionViewedUseCase } from '../port/in/view-auction-batch.use-case';
+import { ViewAuctionBatchService } from './view-auction-batch.service';
 
 export const auctionUseCaseProviders: Provider[] = [
   {
@@ -72,5 +74,9 @@ export const auctionUseCaseProviders: Provider[] = [
   {
     provide: AuctionSoldUseCase,
     useClass: AuctionSoldService,
+  },
+  {
+    provide: AuctionViewedUseCase,
+    useClass: ViewAuctionBatchService,
   },
 ];

@@ -2,11 +2,11 @@ import { KafkaService } from '@app/common/kafka/kafka.service';
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Consumer } from 'kafkajs';
 import { SyncService } from './sync.service';
-import { kafkaAuctionServiceOutboxTopicValueSchema } from '../../../../libs/common/src/schema/kafka-auction-service-outbox-topic.schema';
 import { KafkaDlqTopicValue } from '@app/common/schema/kafka-dlq-topic.schema';
+import { kafkaProductServiceOutboxTopicValueSchema } from '../../../../libs/common/src/schema/kafka-product-service-outbox-topic.schema';
 
 @Injectable()
-export class AuctionChangedConsumer implements OnModuleInit, OnModuleDestroy {
+export class ProductChangedConsumer implements OnModuleInit, OnModuleDestroy {
   private consumer: Consumer;
   private retryCount: number = 0;
 
@@ -15,14 +15,14 @@ export class AuctionChangedConsumer implements OnModuleInit, OnModuleDestroy {
     private readonly syncService: SyncService,
   ) {
     this.consumer = this.kafkaService.consumer({
-      groupId: 'catalog-query-service.auctionchanged',
+      groupId: 'catalog-query-service.productchanged',
     });
   }
 
   onModuleInit = async () => {
     await this.consumer.connect();
     await this.consumer.subscribe({
-      topic: 'auction-service.outbox',
+      topic: 'product-service.outbox',
       fromBeginning: true,
     });
     await this.consumer.run({
@@ -32,11 +32,11 @@ export class AuctionChangedConsumer implements OnModuleInit, OnModuleDestroy {
         try {
           const values = batch.messages
             .map((message) => message.value?.toString() ?? '{}')
-            .map((value) => kafkaAuctionServiceOutboxTopicValueSchema.safeParse(JSON.parse(value)))
+            .map((value) => kafkaProductServiceOutboxTopicValueSchema.safeParse(JSON.parse(value)))
             .filter((safeParsed) => safeParsed.success)
             .map((safeParsed) => safeParsed.data);
 
-          if (values.length !== 0) await this.syncService.changeAuction(values);
+          if (values.length !== 0) await this.syncService.changeProduct(values);
 
           resolveOffset(batch.lastOffset());
           const lastOffset = (BigInt(batch.lastOffset()) + 1n).toString();
@@ -46,7 +46,7 @@ export class AuctionChangedConsumer implements OnModuleInit, OnModuleDestroy {
           this.retryCount++;
           if (this.retryCount > 3) {
             await this.kafkaService.send({
-              topic: 'auction-service.outbox.dlq',
+              topic: 'product-service.outbox.dlq',
               messages: [
                 {
                   key: `${batch.topic}-${batch.partition}-${batch.lastOffset()}`,

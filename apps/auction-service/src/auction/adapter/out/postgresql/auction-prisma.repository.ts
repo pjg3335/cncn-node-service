@@ -14,7 +14,7 @@ import {
 } from '../../../application/port/out/auction-repository.port.type';
 import AuctionBidderForCreateDomain from '../../../domain/model/auction-bidder-for-create.domain';
 import AuctionBidderDomain from '../../../domain/model/auction-bidder.domain';
-import { AuctionChangedValue, ErrorCode, AppException } from '@app/common';
+import { ErrorCode, AppException, KafkaAuctionServiceOutboxTopicValue } from '@app/common';
 import { AuctionCommand } from '../../../application/port/dto/auction.command';
 import { AuctionAdminCommand } from '../../../application/port/dto/auction-admin.command';
 import AuctionAdminDomain from '../../../domain/model/auction-admin.domain';
@@ -26,7 +26,8 @@ import { AuctionsByIdsCommand } from '../../../application/port/dto/auctions-by-
 import { AuctionsByIdsAdminCommand } from '../../../application/port/dto/auctions-by-ids-admin.command';
 import { toNumber } from '@app/common/utils/number.utils';
 import { S3Service } from '@app/common/s3/s3.service';
-import AuctionBidderForCreateBatchDomain from '../../../domain/model/auction-bidder-for-create-batch.domain';
+import AuctionBidderForCreateBulkDomain from '../../../domain/model/auction-bidder-for-create-bulk.domain';
+import AuctionViewedForCreateBulkDomain from '../../../domain/model/auction-viewed-for-create-bulk.domain';
 
 @Injectable()
 export class AuctionPrismaRepository extends AuctionRepositoryPort {
@@ -331,7 +332,7 @@ export class AuctionPrismaRepository extends AuctionRepositoryPort {
     });
   };
 
-  override createAuctionBidders = async (auctionBidders: AuctionBidderForCreateBatchDomain, tx?: TX): Promise<void> => {
+  override createAuctionBidders = async (auctionBidders: AuctionBidderForCreateBulkDomain, tx?: TX): Promise<void> => {
     const prisma = tx ?? this.prisma;
     await prisma.auctionBidders.createMany({
       data: auctionBidders.getSnapshot().map((bidder) => ({
@@ -409,7 +410,7 @@ export class AuctionPrismaRepository extends AuctionRepositoryPort {
     const prisma = tx ?? this.prisma;
     const snapshot = auction.getSnapshot();
     const { auctionId: _, ...row } = snapshot;
-    const auctionChangedValue: AuctionChangedValue = {
+    const auctionChangedValue: KafkaAuctionServiceOutboxTopicValue = {
       aggregateType: 'auction',
       aggregateId: snapshot.auctionUuid,
       eventType: op === 'c' ? 'AuctionCreated' : op === 'u' ? 'AuctionUpdated' : 'AuctionDeleted',
@@ -428,5 +429,15 @@ export class AuctionPrismaRepository extends AuctionRepositoryPort {
       },
     };
     await prisma.outbox.create({ data: auctionChangedValue });
+  };
+
+  override createAuctionViewedBulk = async (
+    auctionViewed: AuctionViewedForCreateBulkDomain,
+    tx?: TX,
+  ): Promise<void> => {
+    const prisma = tx ?? this.prisma;
+    await prisma.auctionViewed.createMany({
+      data: auctionViewed.getSnapshot(),
+    });
   };
 }

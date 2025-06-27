@@ -102,3 +102,12 @@ model Outbox {
 
   @@index([aggregateType, aggregateId])
 }
+
+model AuctionViewed {
+  auctionViewedId BigInt @id @default(autoincrement())
+  auctionUuid     String @db.Uuid
+  viewerUuid      String @db.Uuid
+  viewedAt        DateTime @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+}
